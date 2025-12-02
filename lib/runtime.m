@@ -165,23 +165,6 @@ bare__terminate(void) {
 
   err = bare_terminate(bare);
   assert(err == 0);
-
-  err = bare_run(bare, UV_RUN_DEFAULT);
-  assert(err == 0);
-
-  err = bare_teardown(bare, UV_RUN_DEFAULT, NULL);
-  assert(err == 0);
-
-  err = uv_loop_close(bare__loop);
-  assert(err == 0);
-
-  err = uv_async_send(&bare__platform_shutdown);
-  assert(err == 0);
-
-  uv_thread_join(&bare__platform_thread);
-
-  err = log_close();
-  assert(err == 0);
 }
 
 static void
@@ -198,11 +181,11 @@ bare__foreground(void) {
   assert(err == 0);
 }
 
-@interface BareDelegate : UIResponder <UIApplicationDelegate>
+@interface BareApp : UIApplication <UIApplicationDelegate>
 
 @end
 
-@implementation BareDelegate
+@implementation BareApp
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
   bare__launch();
@@ -244,6 +227,6 @@ main(int argc, char *argv[]) {
   bare__argv = argv;
 
   @autoreleasepool {
-    return UIApplicationMain(argc, argv, nil, @"BareDelegate");
+    return UIApplicationMain(argc, argv, @"BareApp", @"BareApp");
   }
 }
