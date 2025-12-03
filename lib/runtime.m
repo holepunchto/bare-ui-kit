@@ -5,6 +5,7 @@
 #import <path.h>
 #import <rlimit.h>
 #import <signal.h>
+#import <unistd.h>
 #import <uv.h>
 
 #import <UIKit/UIKit.h>
