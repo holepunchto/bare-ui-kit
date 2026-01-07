@@ -8,6 +8,20 @@ project(bare_ui_kit C OBJC)
 fetch_package("github:holepunchto/bare@1.24.5")
 fetch_package("github:holepunchto/libpath")
 
+add_bare_module(bare_ui_kit)
+
+target_sources(
+  ${bare_ui_kit}
+  PRIVATE
+    binding.m
+)
+
+target_link_libraries(
+  ${bare_ui_kit}
+  PUBLIC
+    "-framework UIKit"
+)
+
 add_executable(bare_runtime)
 
 target_sources(

@@ -1,6 +1,6 @@
 # bare-ui-kit
 
-UIKit runtime for Bare.
+UIKit bindings and runtime for Bare.
 
 ```
 npm i bare-ui-kit

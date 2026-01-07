@@ -1,18 +1,22 @@
 {
   "name": "bare-ui-kit",
   "version": "0.1.0",
-  "description": "UIKit runtime for Bare",
+  "description": "UIKit bindings and runtime for Bare",
   "exports": {
     "./package": "./package.json",
+    ".": "./index.js",
     "./runtime": "./runtime.js"
   },
   "files": [
     "index.js",
+    "binding.m",
+    "binding.js",
     "runtime.js",
     "CMakeLists.txt",
     "lib",
     "prebuilds"
   ],
+  "addon": true,
   "scripts": {
     "test": "prettier . --check"
   },
@@ -27,6 +31,7 @@
   },
   "homepage": "https://github.com/holepunchto/bare-ui-kit#readme",
   "dependencies": {
+    "bare-events": "^2.8.2",
     "require-asset": "^1.1.0"
   },
   "devDependencies": {
