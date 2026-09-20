@@ -21,8 +21,10 @@ static bare_t *bare;
 
 static dispatch_source_t bare__poll;
 static dispatch_source_t bare__timer;
+static CFRunLoopObserverRef bare__observer;
 
 static bool bare__exited;
+static bool bare__running;
 
 static void
 bare__on_shutdown(uv_async_t *handle) {
@@ -62,8 +64,14 @@ static void
 bare__run(void) {
   int err;
 
+  if (bare__running) return;
+
+  bare__running = true;
+
   err = bare_run(bare, UV_RUN_NOWAIT);
   assert(err >= 0);
+
+  bare__running = false;
 
   if (bare__exited) return;
 
@@ -135,12 +143,30 @@ bare__launch(void) {
   dispatch_resume(bare__poll);
   dispatch_resume(bare__timer);
 
+  bare__observer = CFRunLoopObserverCreateWithHandler(
+    NULL,
+    kCFRunLoopBeforeWaiting,
+    true,
+    0,
+    ^(CFRunLoopObserverRef observer, CFRunLoopActivity activity) {
+      if (bare__exited) return;
+
+      bare__run();
+    }
+  );
+
+  CFRunLoopAddObserver(CFRunLoopGetMain(), bare__observer, kCFRunLoopCommonModes);
+
   bare__run();
 }
 
 static void
 bare__terminate(void) {
   int err;
+
+  CFRunLoopRemoveObserver(CFRunLoopGetMain(), bare__observer, kCFRunLoopCommonModes);
+
+  CFRelease(bare__observer);
 
   dispatch_source_cancel(bare__poll);
   dispatch_source_cancel(bare__timer);
