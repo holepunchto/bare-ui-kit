@@ -1,5 +1,6 @@
 #import <assert.h>
 #import <bare.h>
+#import <stdbool.h>
 #import <js.h>
 #import <path.h>
 #import <rlimit.h>
@@ -20,6 +21,8 @@ static bare_t *bare;
 
 static dispatch_source_t bare__poll;
 static dispatch_source_t bare__timer;
+
+static bool bare__exited;
 
 static void
 bare__on_shutdown(uv_async_t *handle) {
@@ -62,6 +65,8 @@ bare__run(void) {
   err = bare_run(bare, UV_RUN_NOWAIT);
   assert(err >= 0);
 
+  if (bare__exited) return;
+
   int timeout = uv_backend_timeout(bare__loop);
 
   if (timeout == 0) {
@@ -69,7 +74,12 @@ bare__run(void) {
       bare__run();
     });
   } else if (timeout < 0) {
-    dispatch_source_cancel(bare__timer);
+    dispatch_source_set_timer(
+      bare__timer,
+      DISPATCH_TIME_FOREVER,
+      DISPATCH_TIME_FOREVER,
+      0
+    );
   } else {
     uint64_t nanoseconds = (uint64_t) timeout * NSEC_PER_MSEC;
 
@@ -138,11 +148,13 @@ bare__terminate(void) {
   err = uv_async_send(&bare__shutdown);
   assert(err == 0);
 
-  err = bare_terminate(bare);
-  assert(err == 0);
+  if (!bare__exited) {
+    err = bare_terminate(bare);
+    assert(err == 0);
 
-  err = bare_run(bare, UV_RUN_DEFAULT);
-  assert(err == 0);
+    err = bare_run(bare, UV_RUN_DEFAULT);
+    assert(err == 0);
+  }
 
   int exit_code;
   err = bare_teardown(bare, UV_RUN_DEFAULT, &exit_code);
@@ -157,6 +169,17 @@ bare__terminate(void) {
   uv_thread_join(&bare__platform_thread);
 
   if (exit_code != 0) _exit(exit_code);
+}
+
+static void
+bare__on_exit(bare_t *bare, void *data) {
+  bare__exited = true;
+
+  dispatch_async(dispatch_get_main_queue(), ^{
+    bare__terminate();
+
+    exit(0);
+  });
 }
 
 static void
@@ -269,6 +292,9 @@ main(int argc, char *argv[]) {
   assert(err == 0);
 
   err = bare_setup(bare__loop, bare__platform, NULL, argc, (const char **) argv, NULL, &bare);
+  assert(err == 0);
+
+  err = bare_on_exit(bare, bare__on_exit, NULL);
   assert(err == 0);
 
   @autoreleasepool {
