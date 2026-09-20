@@ -42,14 +42,14 @@ bare_ui_kit_view_controller_init(js_env_t *env, js_callback_info_t *info) {
   js_value_t *result;
 
   @autoreleasepool {
-    BareViewController *handle = [[BareViewController alloc] init];
+    BareViewController *handle = [[[BareViewController alloc] init] autorelease];
 
     err = js_create_external(env, (void *) CFBridgingRetain(handle), bare_ui_kit__on_bridged_release, NULL, &result);
     assert(err == 0);
 
     handle->env = env;
 
-    err = js_create_reference(env, argv[0], 1, &handle->ctx);
+    err = js_create_reference(env, argv[0], 0, &handle->ctx);
     assert(err == 0);
   }
 
