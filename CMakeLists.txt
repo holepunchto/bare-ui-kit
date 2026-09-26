@@ -5,7 +5,7 @@ find_package(cmake-fetch REQUIRED PATHS node_modules/cmake-fetch)
 
 project(bare_ui_kit C OBJC)
 
-fetch_package("github:holepunchto/bare@1.29.4")
+fetch_package("github:holepunchto/bare@1.33.5")
 fetch_package("github:holepunchto/libpath")
 
 add_bare_module(bare_ui_kit)
@@ -14,6 +14,12 @@ target_sources(
   ${bare_ui_kit}
   PRIVATE
     binding.m
+)
+
+target_include_directories(
+  ${bare_ui_kit}
+  PRIVATE
+    node_modules/bare-foundation-registry/lib
 )
 
 target_link_libraries(

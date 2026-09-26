@@ -222,28 +222,53 @@ bare__foreground(void) {
   assert(err == 0);
 }
 
+// From iOS 26 an app that does not adopt the scene lifecycle traps on launch,
+// so the scene is the entry point. Its window only exists once it connects, so
+// the bundle is loaded here.
+@interface BareSceneDelegate : NSObject <UIWindowSceneDelegate>
+
+@end
+
+@implementation BareSceneDelegate
+
+- (void)scene:(UIScene *)scene willConnectToSession:(UISceneSession *)session options:(UISceneConnectionOptions *)options {
+  static bool launched = false;
+
+  if (launched) return;
+
+  launched = true;
+
+  bare__launch();
+}
+
+- (void)sceneDidEnterBackground:(UIScene *)scene {
+  bare__background();
+}
+
+- (void)sceneWillEnterForeground:(UIScene *)scene {
+  bare__foreground();
+}
+
+@end
+
 @interface BareApp : UIApplication <UIApplicationDelegate>
 
 @end
 
 @implementation BareApp
 
-- (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
-  bare__launch();
+- (UISceneConfiguration *)application:(UIApplication *)application configurationForConnectingSceneSession:(UISceneSession *)session options:(UISceneConnectionOptions *)options {
+  UISceneConfiguration *configuration = [UISceneConfiguration
+    configurationWithName:@"Default"
+             sessionRole:session.role];
 
-  return YES;
+  configuration.delegateClass = BareSceneDelegate.class;
+
+  return configuration;
 }
 
 - (void)applicationWillTerminate:(UIApplication *)application {
   bare__terminate();
-}
-
-- (void)applicationDidEnterBackground:(UIApplication *)application {
-  bare__background();
-}
-
-- (void)applicationWillEnterForeground:(UIApplication *)application {
-  bare__foreground();
 }
 
 @end
