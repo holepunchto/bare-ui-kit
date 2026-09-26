@@ -139,3 +139,61 @@ bare_ui_kit_image_scale(js_env_t *env, js_callback_info_t *info) {
 
   return result;
 }
+
+static js_value_t *
+bare_ui_kit_image_rendering_mode(js_env_t *env, js_callback_info_t *info) {
+  int err;
+
+  size_t argc = 1;
+  js_value_t *argv[1];
+
+  err = js_get_callback_info(env, info, &argc, argv, NULL, NULL);
+  assert(err == 0);
+
+  assert(argc == 1);
+
+  void *handle;
+  if (!bare_foundation__read_tag(env, argv[0], "handle", &handle)) return NULL;
+
+  js_value_t *result;
+
+  @autoreleasepool {
+    UIImage *image = (__bridge UIImage *) handle;
+
+    err = js_create_int32(env, image.renderingMode, &result);
+    assert(err == 0);
+  }
+
+  return result;
+}
+
+// A rendering mode cannot be set on an image, only asked for, which answers
+// with an image of its own.
+static js_value_t *
+bare_ui_kit_image_with_rendering_mode(js_env_t *env, js_callback_info_t *info) {
+  int err;
+
+  size_t argc = 2;
+  js_value_t *argv[2];
+
+  err = js_get_callback_info(env, info, &argc, argv, NULL, NULL);
+  assert(err == 0);
+
+  assert(argc == 2);
+
+  void *handle;
+  if (!bare_foundation__read_tag(env, argv[0], "handle", &handle)) return NULL;
+
+  int32_t rendering_mode;
+  if (!bare_ui_kit__read_int32(env, argv[1], "rendering_mode", &rendering_mode)) return NULL;
+
+  js_value_t *result;
+
+  @autoreleasepool {
+    UIImage *image = (__bridge UIImage *) handle;
+
+    result = bare_foundation__bridge(env, [image imageWithRenderingMode:rendering_mode]);
+  }
+
+  return result;
+}

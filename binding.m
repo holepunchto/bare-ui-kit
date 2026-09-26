@@ -116,6 +116,8 @@ bare_ui_kit_exports(js_env_t *env, js_value_t *exports) {
     bare_ui_kit_image_size_into_typed
   )
   V("imageScale", bare_ui_kit_image_scale)
+  V("imageRenderingMode", bare_ui_kit_image_rendering_mode)
+  V("imageWithRenderingMode", bare_ui_kit_image_with_rendering_mode)
 
   V("imageViewInit", bare_ui_kit_image_view_init)
   V("imageViewImage", bare_ui_kit_image_view_image)
@@ -333,6 +335,7 @@ bare_ui_kit_exports(js_env_t *env, js_value_t *exports) {
     bare_ui_kit_view_user_interaction_enabled_typed
   )
   V("viewBackgroundColor", bare_ui_kit_view_background_color)
+  V("viewTintColor", bare_ui_kit_view_tint_color)
   V("viewSuperview", bare_ui_kit_view_superview)
   V("viewSubviews", bare_ui_kit_view_subviews)
   V("viewAddSubview", bare_ui_kit_view_add_subview)
@@ -403,6 +406,10 @@ bare_ui_kit_exports(js_env_t *env, js_value_t *exports) {
   V("TEXT_ALIGNMENT_CENTER", NSTextAlignmentCenter)
   V("TEXT_ALIGNMENT_JUSTIFIED", NSTextAlignmentJustified)
   V("TEXT_ALIGNMENT_NATURAL", NSTextAlignmentNatural)
+
+  V("IMAGE_RENDERING_MODE_AUTOMATIC", UIImageRenderingModeAutomatic)
+  V("IMAGE_RENDERING_MODE_ALWAYS_ORIGINAL", UIImageRenderingModeAlwaysOriginal)
+  V("IMAGE_RENDERING_MODE_ALWAYS_TEMPLATE", UIImageRenderingModeAlwaysTemplate)
 
   V("VIEW_CONTENT_MODE_SCALE_TO_FILL", UIViewContentModeScaleToFill)
   V("VIEW_CONTENT_MODE_SCALE_ASPECT_FIT", UIViewContentModeScaleAspectFit)

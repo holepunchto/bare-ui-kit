@@ -808,6 +808,36 @@ bare_ui_kit_view_background_color(js_env_t *env, js_callback_info_t *info) {
 }
 
 static js_value_t *
+bare_ui_kit_view_tint_color(js_env_t *env, js_callback_info_t *info) {
+  int err;
+
+  size_t argc = 2;
+  js_value_t *argv[2];
+
+  err = js_get_callback_info(env, info, &argc, argv, NULL, NULL);
+  assert(err == 0);
+
+  assert(argc == 1 || argc == 2);
+
+  void *handle;
+  if (!bare_foundation__read_tag(env, argv[0], "handle", &handle)) return NULL;
+
+  js_value_t *result = NULL;
+
+  @autoreleasepool {
+    UIView *view = (__bridge UIView *) handle;
+
+    if (argc == 1) {
+      result = bare_foundation__bridge(env, view.tintColor);
+    } else {
+      view.tintColor = bare_foundation__to_object(env, argv[1]);
+    }
+  }
+
+  return result;
+}
+
+static js_value_t *
 bare_ui_kit_view_superview(js_env_t *env, js_callback_info_t *info) {
   int err;
 
