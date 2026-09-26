@@ -16,6 +16,12 @@ target_sources(
     binding.m
 )
 
+target_include_directories(
+  ${bare_ui_kit}
+  PRIVATE
+    node_modules/bare-foundation-registry/lib
+)
+
 target_link_libraries(
   ${bare_ui_kit}
   PUBLIC

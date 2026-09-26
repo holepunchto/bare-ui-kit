@@ -6,10 +6,21 @@
 
 #import "bridging.h"
 
-@interface BareViewController : UIViewController {
+// The controller lays its view out to fill the window, so this is where a
+// size change is observed. Watching every view instead would report the same
+// pass once per node, and re-entrantly for anything that sets a frame in
+// response.
+enum {
+  bare_ui_kit_view_controller_event_did_layout_subviews = 1 << 0,
+  bare_ui_kit_view_controller_event_safe_area_insets_did_change = 1 << 1,
+};
+
+@interface BareViewController : UIViewController <BareEventTarget> {
 @public
   js_env_t *env;
   js_ref_t *ctx;
+
+  int32_t mask;
 }
 
 @end
@@ -23,6 +34,30 @@
   assert(err == 0);
 
   [super dealloc];
+}
+
+- (int32_t)eventMask {
+  return mask;
+}
+
+- (void)setEventMask:(int32_t)value {
+  mask = value;
+}
+
+- (void)viewDidLayoutSubviews {
+  [super viewDidLayoutSubviews];
+
+  if ((mask & bare_ui_kit_view_controller_event_did_layout_subviews) == 0) return;
+
+  bare_ui_kit__emit(env, ctx, "_ondidlayoutsubviews");
+}
+
+- (void)viewSafeAreaInsetsDidChange {
+  [super viewSafeAreaInsetsDidChange];
+
+  if ((mask & bare_ui_kit_view_controller_event_safe_area_insets_did_change) == 0) return;
+
+  bare_ui_kit__emit(env, ctx, "_onsafeareainsetsdidchange");
 }
 
 @end
@@ -44,11 +79,12 @@ bare_ui_kit_view_controller_init(js_env_t *env, js_callback_info_t *info) {
   @autoreleasepool {
     BareViewController *handle = [[[BareViewController alloc] init] autorelease];
 
-    err = js_create_external(env, (void *) CFBridgingRetain(handle), bare_ui_kit__on_bridged_release, NULL, &result);
-    assert(err == 0);
+    result = bare_foundation__bridge(env, handle);
 
     handle->env = env;
 
+    // Weak, so that the native object does not keep its own JS wrapper
+    // alive. Events are dropped once the wrapper has been collected.
     err = js_create_reference(env, argv[0], 0, &handle->ctx);
     assert(err == 0);
   }
@@ -69,8 +105,7 @@ bare_ui_kit_view_controller_view(js_env_t *env, js_callback_info_t *info) {
   assert(argc == 1 || argc == 2);
 
   void *handle;
-  err = js_get_value_external(env, argv[0], &handle);
-  assert(err == 0);
+  if (!bare_foundation__read_tag(env, argv[0], "handle", &handle)) return NULL;
 
   js_value_t *result = NULL;
 
@@ -78,18 +113,9 @@ bare_ui_kit_view_controller_view(js_env_t *env, js_callback_info_t *info) {
     UIViewController *view_controller = (__bridge UIViewController *) handle;
 
     if (argc == 1) {
-      UIView *view = view_controller.view;
-
-      err = js_create_external(env, (void *) CFBridgingRetain(view), bare_ui_kit__on_bridged_release, NULL, &result);
-      assert(err == 0);
+      result = bare_foundation__bridge(env, view_controller.view);
     } else {
-      void *handle;
-      err = js_get_value_external(env, argv[1], &handle);
-      assert(err == 0);
-
-      UIView *view = (__bridge UIView *) handle;
-
-      view_controller.view = view;
+      view_controller.view = bare_foundation__to_object(env, argv[1]);
     }
   }
 

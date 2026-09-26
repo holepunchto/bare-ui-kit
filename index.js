@@ -1,3 +1,22 @@
+exports.ActivityIndicatorView = require('./lib/activity-indicator-view')
+exports.AttributedString = require('./lib/attributed-string')
+exports.Color = require('./lib/color')
+exports.Font = require('./lib/font')
+exports.FontDescriptor = require('./lib/font-descriptor')
+exports.Image = require('./lib/image')
+exports.ImageView = require('./lib/image-view')
+exports.Label = require('./lib/label')
+exports.ParagraphStyle = require('./lib/paragraph-style')
+exports.Scene = require('./lib/scene')
+exports.Screen = require('./lib/screen')
+exports.ScrollView = require('./lib/scroll-view')
+exports.Switch = require('./lib/switch')
+exports.TextField = require('./lib/text-field')
+exports.TextView = require('./lib/text-view')
 exports.View = require('./lib/view')
 exports.ViewController = require('./lib/view-controller')
 exports.Window = require('./lib/window')
+
+// Every wrapper answers the native handle protocol, so another module can take
+// one of our objects and adopt it into its own registry.
+require('./lib/handle').expose(Object.values(exports))
