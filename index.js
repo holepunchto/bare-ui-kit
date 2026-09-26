@@ -16,7 +16,3 @@ exports.TextView = require('./lib/text-view')
 exports.View = require('./lib/view')
 exports.ViewController = require('./lib/view-controller')
 exports.Window = require('./lib/window')
-
-// Every wrapper answers the native handle protocol, so another module can take
-// one of our objects and adopt it into its own registry.
-require('./lib/handle').expose(Object.values(exports))
