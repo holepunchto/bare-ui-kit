@@ -1,5 +1,6 @@
 exports.ActivityIndicatorView = require('./lib/activity-indicator-view')
 exports.AttributedString = require('./lib/attributed-string')
+exports.BezierPath = require('./lib/bezier-path')
 exports.Color = require('./lib/color')
 exports.Font = require('./lib/font')
 exports.FontDescriptor = require('./lib/font-descriptor')

@@ -11,6 +11,7 @@
 #import "lib/font-descriptor.h"
 #import "lib/image.h"
 #import "lib/image-view.h"
+#import "lib/bezier-path.h"
 #import "lib/label.h"
 #import "lib/paragraph-style.h"
 #import "lib/scene.h"
@@ -155,6 +156,13 @@ bare_ui_kit_exports(js_env_t *env, js_value_t *exports) {
   V("textViewAutocapitalizationType", bare_ui_kit_text_view_autocapitalization_type)
   V("textViewAutocorrectionType", bare_ui_kit_text_view_autocorrection_type)
   V("textViewScrollEnabled", bare_ui_kit_text_view_scroll_enabled)
+
+  V("bezierPathInit", bare_ui_kit_bezier_path_init)
+  V("bezierPathMoveTo", bare_ui_kit_bezier_path_move_to)
+  V("bezierPathLineTo", bare_ui_kit_bezier_path_line_to)
+  V("bezierPathCurveTo", bare_ui_kit_bezier_path_curve_to)
+  V("bezierPathAddArc", bare_ui_kit_bezier_path_add_arc)
+  V("bezierPathClose", bare_ui_kit_bezier_path_close)
 
   V("labelInit", bare_ui_kit_label_init)
   V("labelText", bare_ui_kit_label_text)
