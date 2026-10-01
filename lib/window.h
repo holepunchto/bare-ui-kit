@@ -72,8 +72,7 @@ enum {
 
 @end
 
-// A window without a scene is never shown, but it can still be made without
-// one, for headless use.
+// A window without a scene is never shown.
 static js_value_t *
 bare_ui_kit_window_init(js_env_t *env, js_callback_info_t *info) {
   int err;
