@@ -1,0 +1,10 @@
+# https://github.com/holepunchto/lunte/issues/17
+lib/alert-action.d.ts
+lib/attributed-string.d.ts
+lib/scroll-view.d.ts
+lib/switch.d.ts
+lib/text-field.d.ts
+lib/text-view.d.ts
+lib/view-controller.d.ts
+lib/view.d.ts
+lib/window.d.ts
