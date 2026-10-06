@@ -35,5 +35,5 @@ jobs:
         with:
           platform: ${{ matrix.platform }}
           arch: ${{ matrix.arch }}
-          flags: --debug
+          flags: --simulator --debug
       - run: npm test
