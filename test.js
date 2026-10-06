@@ -1,0 +1,7 @@
+require('./test/view')
+require('./test/window')
+require('./test/view-controller')
+require('./test/layout')
+require('./test/scroll-view')
+require('./test/controls')
+require('./test/values')
