@@ -28,7 +28,7 @@ jobs:
             platform: ios
             arch: arm64
     runs-on: ${{ matrix.os }}
-    name: Test / ${{ matrix.platform }}-${{ matrix.arch }}
+    name: Test / ${{ matrix.platform }}-${{ matrix.arch }}-simulator
     steps:
       - uses: holepunchto/actions/bare-base@v1
       - uses: holepunchto/actions/compile-prebuilds@v1
