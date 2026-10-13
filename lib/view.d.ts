@@ -1,6 +1,7 @@
 import EventEmitter from 'bare-events'
 import { tag, handle, Handle, Wrapper } from 'bare-foundation-registry'
 import UIKitColor = require('./color')
+import UIKitWindow = require('./window')
 
 /**
  * The base of every view, as a `UIView`. Views that are added to a view are kept alive by it, so
@@ -41,6 +42,9 @@ interface UIKitView<
   readonly superview: UIKitView | null
 
   readonly subviews: UIKitView[]
+
+  /** The window the view is in, or `null` if it is in none. */
+  readonly window: UIKitWindow | null
 
   /** Add `view` on top of the other subviews. It can come from another addon. */
   addSubview(view: Wrapper): this
