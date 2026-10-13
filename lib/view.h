@@ -1112,6 +1112,33 @@ bare_ui_kit_view_superview(js_env_t *env, js_callback_info_t *info) {
 }
 
 static js_value_t *
+bare_ui_kit_view_window(js_env_t *env, js_callback_info_t *info) {
+  int err;
+
+  size_t argc = 1;
+  js_value_t *argv[1];
+
+  bare_ui_kit_state_t *state;
+  err = js_get_callback_info(env, info, &argc, argv, NULL, (void **) &state);
+  assert(err == 0);
+
+  assert(argc == 1);
+
+  void *handle;
+  if (bare_foundation_read_tag(env, state->registry, argv[0], "handle", &handle) < 0) return NULL;
+
+  js_value_t *result;
+
+  @autoreleasepool {
+    UIView *view = (__bridge UIView *) handle;
+
+    result = bare_foundation_bridge(env, state->registry, view.window);
+  }
+
+  return result;
+}
+
+static js_value_t *
 bare_ui_kit_view_subviews(js_env_t *env, js_callback_info_t *info) {
   int err;
 

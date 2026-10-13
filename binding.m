@@ -383,6 +383,7 @@ bare_ui_kit_exports(js_env_t *env, js_value_t *exports) {
   V("viewOverrideUserInterfaceStyle", bare_ui_kit_view_override_user_interface_style)
   V("viewUserInterfaceStyle", bare_ui_kit_view_user_interface_style)
   V("viewSuperview", bare_ui_kit_view_superview)
+  V("viewWindow", bare_ui_kit_view_window)
   V("viewSubviews", bare_ui_kit_view_subviews)
   V("viewAddSubview", bare_ui_kit_view_add_subview)
   V("viewInsertSubviewAtIndex", bare_ui_kit_view_insert_subview_at_index)

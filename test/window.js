@@ -1,6 +1,6 @@
 const { test } = require('bare-tap')
 const { afterAnimationFrame } = require('bare-animation-frame')
-const { Scene, Screen, ViewController, Window } = require('..')
+const { Scene, Screen, View, ViewController, Window } = require('..')
 const { open } = require('./helpers')
 
 test('fills its scene', (t) => {
@@ -29,4 +29,20 @@ test('replaces its root view controller', async (t) => {
   window.rootViewController = other
 
   t.ok(window.rootViewController === other, 'replaced')
+})
+
+test('is the window of the views in it', (t) => {
+  const { window, controller } = open(t)
+
+  const view = new View()
+
+  t.equal(view.window, null, 'none before')
+
+  controller.view.addSubview(view)
+
+  t.ok(view.window === window, 'same wrapper')
+
+  view.removeFromSuperview()
+
+  t.equal(view.window, null, 'none after')
 })
