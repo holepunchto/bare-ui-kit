@@ -1,6 +1,6 @@
 {
   "name": "bare-ui-kit",
-  "version": "0.3.0",
+  "version": "0.3.1",
   "description": "UIKit bindings and runtime for Bare",
   "exports": {
     "./package": "./package.json",
