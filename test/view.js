@@ -1,5 +1,6 @@
 const { test } = require('bare-tap')
 const { afterAnimationFrame } = require('bare-animation-frame')
+const Pointer = require('bare-pointer')
 const { Color, View } = require('..')
 const { open } = require('./helpers')
 
@@ -124,4 +125,43 @@ test('overrides the interface style', async (t) => {
   await afterAnimationFrame()
 
   t.equal(view.userInterfaceStyle, View.USER_INTERFACE_STYLE.DARK, 'effective')
+})
+
+test('touches a view with the pointer', async (t) => {
+  const { controller } = open(t)
+  const root = controller.view
+  const pointer = new Pointer()
+
+  t.teardown(() => pointer.destroy())
+
+  const view = new View({ x: 40, y: 100, width: 100, height: 80 })
+
+  root.addSubview(view)
+
+  const events = []
+  const pointers = new Set()
+
+  for (const name of ['touchesBegan', 'touchesMoved', 'touchesEnded']) {
+    view.on(name, ({ x, y, pointerId }) => {
+      events.push([name, x, y])
+      pointers.add(pointerId)
+    })
+  }
+
+  await pointer.down(view, 10, 10)
+  await pointer.move(view, 50, 40)
+  await pointer.move(view, 90, 70)
+  await pointer.up()
+
+  t.deepStrictEqual(
+    events,
+    [
+      ['touchesBegan', 10, 10],
+      ['touchesMoved', 50, 40],
+      ['touchesMoved', 90, 70],
+      ['touchesEnded', 90, 70]
+    ],
+    'events'
+  )
+  t.equal(pointers.size, 1, 'one touch')
 })

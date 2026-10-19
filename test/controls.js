@@ -1,5 +1,7 @@
 const { test } = require('bare-tap')
+const Pointer = require('bare-pointer')
 const { ActivityIndicatorView, Label, Switch, TextField, TextView } = require('..')
+const { open } = require('./helpers')
 
 test('toggles a switch', (t) => {
   const control = new Switch()
@@ -13,6 +15,50 @@ test('toggles a switch', (t) => {
   control.enabled = false
 
   t.equal(control.enabled, false, 'disabled')
+})
+
+test('toggles a switch with the pointer', async (t) => {
+  const { controller } = open(t)
+  const root = controller.view
+  const pointer = new Pointer()
+
+  t.teardown(() => pointer.destroy())
+
+  const control = new Switch({ x: 40, y: 100 })
+
+  root.addSubview(control)
+
+  let changes = 0
+
+  control.on('valueChanged', () => changes++)
+
+  await pointer.tap(control)
+
+  t.equal(changes, 1, 'changed')
+  t.equal(control.isOn, true, 'on')
+})
+
+test('does not toggle a disabled switch with the pointer', async (t) => {
+  const { controller } = open(t)
+  const root = controller.view
+  const pointer = new Pointer()
+
+  t.teardown(() => pointer.destroy())
+
+  const control = new Switch({ x: 40, y: 100 })
+
+  control.enabled = false
+
+  root.addSubview(control)
+
+  let changes = 0
+
+  control.on('valueChanged', () => changes++)
+
+  await pointer.tap(control)
+
+  t.equal(changes, 0, 'not changed')
+  t.equal(control.isOn, false, 'off')
 })
 
 test('round trips the text of a field', (t) => {
@@ -34,6 +80,26 @@ test('selects text in a field', (t) => {
   field.selectedRange = { location: 6, length: 5 }
 
   t.deepStrictEqual(field.selectedRange, { location: 6, length: 5 })
+})
+
+test('focuses a text field with the pointer', async (t) => {
+  const { controller } = open(t)
+  const root = controller.view
+  const pointer = new Pointer()
+
+  t.teardown(() => pointer.destroy())
+
+  const field = new TextField({ x: 40, y: 100, width: 200, height: 40 })
+
+  root.addSubview(field)
+
+  let edits = 0
+
+  field.on('didBeginEditing', () => edits++)
+
+  await pointer.tap(field)
+
+  t.equal(edits, 1)
 })
 
 test('round trips the text of a text view', (t) => {
